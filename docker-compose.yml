@@ -1,0 +1,38 @@
+services:
+ app:
+    build:
+        context: ./
+        dockerfile: Dockerfile
+    depends_on:
+        - db
+    env_file:
+        - .env
+    volumes:
+            - ./:/usr/src/app
+
+ nginx:
+    image: nginx:alpine
+    ports:
+          - "${APP_PORT:-4501}:80"
+    depends_on:
+        - app
+    volumes:
+           - ./:/usr/src/app:ro
+           - ./nginx-app.conf:/etc/nginx/conf.d/default.conf:ro
+
+ db:
+    image: postgres:latest
+    environment:
+      PGHOST: ${DB_HOST}
+      PGPORT: ${DB_PORT}
+      POSTGRES_DB: ${DB_DATABASE}
+      PGDATABASE: ${DB_DATABASE}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGPASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      PGUSER: ${DB_USERNAME}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+     db-data:
