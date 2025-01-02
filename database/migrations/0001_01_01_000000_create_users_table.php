@@ -19,7 +19,33 @@ return new class extends Migration
             $table->string('password')->nullable(); // Changed to nullable()
             $table->string('google_id'); // Added
             $table->string('avatar')->nullable(); // Added
+            $table->foreignId('company_id')->nullable();
+            $table->integer('level')->default(0);
             $table->rememberToken();
+            $table->timestamps();
+        });
+
+        Schema::create('companies', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+        });
+
+        Schema::create('events', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamp('start_at');
+            $table->timestamp('end_at');
+            $table->foreignId('company_id');
+            $table->longText('cover_image_link');
+            $table->longText('description');
+            $table->double('price');
+            $table->timestamps();
+        });
+
+        Schema::create('event_user', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('event_id');
+            $table->foreignId('user_id');
             $table->timestamps();
         });
 
@@ -47,5 +73,8 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('companies');
+        Schema::dropIfExists('events');
+        Schema::dropIfExists('event_user');
     }
 };
